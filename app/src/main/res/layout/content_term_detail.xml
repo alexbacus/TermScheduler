@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <TextView
+        android:id="@+id/TermName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="Term Name"
+        app:layout_constraintBottom_toBottomOf="@+id/InputTermName"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/InputTermName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="108dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toEndOf="@+id/TermName"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <TextView
+        android:id="@+id/term_start_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="Start Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/InputTermName" />
+
+    <EditText
+        android:id="@+id/start_date_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="@+id/term_start_date_label"
+        app:layout_constraintStart_toStartOf="@+id/InputTermName"
+        tools:autofillHints="Start Date" />
+
+    <Button
+        android:id="@+id/select_start_date_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#2196F3"
+        android:text="Select"
+        app:layout_constraintBottom_toBottomOf="@id/start_date_edit_text"
+        app:layout_constraintStart_toEndOf="@id/start_date_edit_text" />
+
+    <TextView
+        android:id="@+id/term_end_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="End Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_date_edit_text" />
+
+    <EditText
+        android:id="@+id/end_date_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="@+id/term_end_date_label"
+        app:layout_constraintStart_toStartOf="@+id/InputTermName"
+        tools:autofillHints="End Date" />
+
+    <Button
+        android:id="@+id/select_end_date_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#2196F3"
+        android:text="Select"
+        app:layout_constraintBottom_toBottomOf="@id/end_date_edit_text"
+        app:layout_constraintStart_toEndOf="@id/end_date_edit_text" />
+
+    <TextView
+        android:id="@+id/AssociatedCoursesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="Associated Courses"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/end_date_edit_text" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="@dimen/big_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AssociatedCoursesLabel"
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/part_list_item" />
+
+    <Button
+        android:id="@+id/AddCourseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:backgroundTint="#2196F3"
+        android:text="Add Course"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/recyclerview"
+        app:layout_constraintStart_toEndOf="@id/AssociatedCoursesLabel" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
