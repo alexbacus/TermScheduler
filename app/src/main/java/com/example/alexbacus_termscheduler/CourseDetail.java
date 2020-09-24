@@ -2,22 +2,32 @@ package com.example.alexbacus_termscheduler;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
+import com.example.alexbacus_termscheduler.Entities.AssessmentEntity;
 import com.example.alexbacus_termscheduler.Entities.CourseEntity;
-import com.example.alexbacus_termscheduler.Entities.TermEntity;
+import com.example.alexbacus_termscheduler.ViewModel.AssessmentViewModel;
 import com.example.alexbacus_termscheduler.ViewModel.CourseViewModel;
 import com.example.alexbacus_termscheduler.ViewModel.TermViewModel;
+import com.example.alexbacus_termscheduler.ui.AssessmentAdapter;
 import com.example.alexbacus_termscheduler.ui.CourseAdapter;
 import com.example.alexbacus_termscheduler.ui.TermAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -35,6 +45,7 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
 
     private CourseViewModel mCourseViewModel;
     private TermViewModel mTermViewModel;
+    private AssessmentViewModel mAssessmentViewModel;
     private EditText mEditTitle;
     private EditText mEditStartDate;
     private EditText mEditEndDate;
@@ -42,22 +53,76 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
     private EditText mEditNotes;
     Button selectStartDateButton;
     Button selectEndDateButton;
+    Button addAssessmentButton;
+    Button deleteButton;
     private TextView editDate;
     private List<String> courseStatus = new ArrayList<>();
-    private TermEntity selectedTerm;
+    private List<AssessmentEntity> associatedAssessments = new ArrayList<AssessmentEntity>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_course_detail);
         final CourseAdapter adapter = new CourseAdapter(this);
         final TermAdapter termAdapter = new TermAdapter(this);
+        final AssessmentAdapter assessmentAdapter = new AssessmentAdapter(this);
         mCourseViewModel = new ViewModelProvider(this).get(CourseViewModel.class);
         mTermViewModel = new ViewModelProvider(this).get(TermViewModel.class);
+        mAssessmentViewModel = new ViewModelProvider(this).get(AssessmentViewModel.class);
         mTermViewModel.getAllTerms().observe(this, terms -> termAdapter.setTerms(terms));
+        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        recyclerView.setAdapter(assessmentAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mCourseViewModel.getAllCourses().observe(this, courses -> {
             // Update the cached copy of the words in the adapter.
             adapter.setCourses(courses);
         });
-        setContentView(R.layout.activity_course_detail);
+        mAssessmentViewModel.getAllAssessments().observe(this, new Observer<List<AssessmentEntity>>() {
+            @Override
+            public void onChanged(@Nullable final List<AssessmentEntity> assessments) {
+                associatedAssessments.clear();
+                int courseID = getIntent().getIntExtra("courseID", -1);
+                if (courseID != -1) {
+                    for(AssessmentEntity a: assessments) {
+                        if (a.getCourseId() == courseID && !(associatedAssessments.contains(a))) {
+                            if (a.getBasicStatus() != BasicStatus.TRASHED.getValue()){
+                                associatedAssessments.add(a);
+                            }
+                        }
+                    }
+                }
+                if (!(associatedAssessments.isEmpty())) {
+                    assessmentAdapter.setAssessments(associatedAssessments);
+                    addAssessmentButton = (Button) findViewById(R.id.AddAssessmentButton);
+                    if (associatedAssessments.size() == 5) {
+                        addAssessmentButton.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        });
+        addAssessmentButton = (Button) findViewById(R.id.AddAssessmentButton);
+        if (getIntent().getIntExtra("courseID", -1) != -1 && associatedAssessments.size() <= 5) {
+            addAssessmentButton.setVisibility(View.VISIBLE);
+        }
+
+        addAssessmentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int assessmentId = mAssessmentViewModel.lastID() + 1;
+                String assessmentTitle = "Assessment " + assessmentId;
+                String startDate = mEditStartDate.getText().toString();
+                String endDate = mEditEndDate.getText().toString();
+                String type = "Performance";
+                int courseId = getIntent().getIntExtra("courseID", -1);
+
+                AssessmentEntity assessment = new AssessmentEntity(assessmentId, assessmentTitle, type, startDate, endDate, courseId, BasicStatus.ACTIVE.getValue());
+                mAssessmentViewModel.insert(assessment);
+                if (associatedAssessments.size() == 4) {
+                    addAssessmentButton.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
         mEditTitle = findViewById(R.id.InputCourseTitle);
         mEditStartDate = findViewById(R.id.start_date_edit_text);
         mEditEndDate = findViewById(R.id.end_date_edit_text);
@@ -78,6 +143,17 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
             spinner.setSelection(courseStatus.indexOf(getIntent().getStringExtra("status")));
             mEditNotes.setText(getIntent().getStringExtra("notes"));
         }
+        deleteButton = (Button)findViewById(R.id.DeleteButton);
+        if (getIntent().getIntExtra("courseID", -1) == -1) {
+            deleteButton.setVisibility(View.INVISIBLE);
+        }
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCourseViewModel.delete(getIntent().getIntExtra("courseID", -1));
+                finish();
+            }
+        });
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,11 +169,13 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
                 replyIntent.putExtra("status", status);
                 replyIntent.putExtra("notes", notes);
                 int id=getIntent().getIntExtra("courseID",-1);
+                int basicStatus = getIntent().getIntExtra("basicStatus", 1);
                 if (id == -1) {
                     id = (mCourseViewModel.lastID()) + 1;
                 }
+                int termId = getIntent().getIntExtra("termId", 0);
                 replyIntent.putExtra("courseID", id);
-                CourseEntity course = new CourseEntity(id, title, startDate, endDate, status, notes, selectedTerm.getTermID());
+                CourseEntity course = new CourseEntity(id, title, startDate, endDate, status, notes, termId, basicStatus);
                 mCourseViewModel.insert(course);
                 setResult(RESULT_OK, replyIntent);
                 finish();
@@ -123,29 +201,12 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
 
         // set default value
         spinner.setSelection(courseStatus.indexOf("In Progress"));
-
-        spinner = findViewById(R.id.TermSpinner);
-        final ArrayAdapter<TermEntity> adapter2 = new ArrayAdapter<TermEntity>(this,
-                android.R.layout.simple_spinner_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter2);
-        spinner.setOnItemSelectedListener(this);
-
-        mTermViewModel.getAllTerms().observe(this, new Observer<List<TermEntity>>() {
-            @Override
-            public void onChanged(List<TermEntity> termEntities) {
-                adapter2.addAll(termEntities);
-            }
-        });
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.getId() == R.id.StatusSpinner) {
             status = parent.getItemAtPosition(position).toString();
-        }
-        else if (parent.getId() == R.id.TermSpinner) {
-            selectedTerm = (TermEntity)parent.getItemAtPosition(position);
         }
     }
 
@@ -192,5 +253,14 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 }

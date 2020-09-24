@@ -14,4 +14,6 @@
     <string name="title_activity_part_detail">Term Detail</string>
     <string name="title_activity_course">Courses</string>
     <string name="title_activity_course_detail">Course Detail</string>
+    <string name="title_activity_assessment">Assessments</string>
+    <string name="title_activity_assessment_detail">Assessment Detail</string>
 </resources>

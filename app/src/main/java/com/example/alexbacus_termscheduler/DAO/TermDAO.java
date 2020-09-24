@@ -21,6 +21,6 @@ public interface TermDAO {
     @Query("SELECT * FROM term_table ORDER BY termID ASC")
     LiveData<List<TermEntity>> getAllTerms();
 
-//    @Query("SELECT * FROM part_table WHERE productID= :prodID ORDER BY partID ASC")
-//    LiveData<List<PartEntity>> getAllAssociatedParts(int prodID);
+    @Query("UPDATE term_table SET basicStatus = 2 WHERE termID == :id")
+    void deleteById(int id);
 }

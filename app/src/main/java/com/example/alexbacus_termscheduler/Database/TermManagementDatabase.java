@@ -9,19 +9,22 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.alexbacus_termscheduler.DAO.AssessmentDAO;
 import com.example.alexbacus_termscheduler.DAO.CourseDAO;
 import com.example.alexbacus_termscheduler.DAO.TermDAO;
+import com.example.alexbacus_termscheduler.Entities.AssessmentEntity;
 import com.example.alexbacus_termscheduler.Entities.CourseEntity;
 import com.example.alexbacus_termscheduler.Entities.TermEntity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {TermEntity.class, CourseEntity.class}, version = 4, exportSchema = false)
+@Database(entities = {TermEntity.class, CourseEntity.class, AssessmentEntity.class}, version = 9, exportSchema = false)
 
 public abstract class TermManagementDatabase extends RoomDatabase {
     public abstract TermDAO termDAO();
     public abstract CourseDAO courseDAO();
+    public abstract AssessmentDAO assessmentDAO();
 
     private static volatile TermManagementDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -54,18 +57,26 @@ public abstract class TermManagementDatabase extends RoomDatabase {
                 TermDAO dao = INSTANCE.termDAO();
                 dao.deleteAllTerms();
 
-                TermEntity term = new TermEntity(1,"Hello", "2019-01-01", "2019-02-01");
+                TermEntity term = new TermEntity(1,"Hello", "2019-01-01", "2019-02-01", 1);
                 dao.insert(term);
-                term = new TermEntity(2, "World", "2020-01-01", "2020-02-01");
+                term = new TermEntity(2, "World", "2020-01-01", "2020-02-01", 1);
                 dao.insert(term);
 
                 CourseDAO courseDao = INSTANCE.courseDAO();
                 courseDao.deleteAllCourses();
 
-                CourseEntity course = new CourseEntity(1, "Course 1", "2019-01-01", "2019-02-01", "In Progress", "Here are some notes", 1);
+                CourseEntity course = new CourseEntity(1, "Course 1", "2019-01-01", "2019-02-01", "In Progress", "Here are some notes", 1, 1);
                 courseDao.insert(course);
-                course = new CourseEntity(2, "Course 2", "2020-01-01", "2020-02-01", "Completed", "Here are some notes", 2);
+                course = new CourseEntity(2, "Course 2", "2020-01-01", "2020-02-01", "Completed", "Here are some notes", 2, 1);
                 courseDao.insert(course);
+
+                AssessmentDAO assessmentDao = INSTANCE.assessmentDAO();
+                assessmentDao.deleteAllAssessments();
+
+                AssessmentEntity assessment = new AssessmentEntity(1, "Assessment 1", "Objective", "2019-01-01", "2019-02-01", 1, 1);
+                assessmentDao.insert(assessment);
+                assessment = new AssessmentEntity(2, "Assessment 2", "Performance", "2019-02-01", "2019-03-01", 2, 1);
+                assessmentDao.insert(assessment);
             });
         }
     };

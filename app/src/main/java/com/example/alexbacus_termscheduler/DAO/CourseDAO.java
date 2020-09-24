@@ -21,9 +21,6 @@ public interface CourseDAO {
     @Query("SELECT * FROM course_table ORDER BY courseID ASC")
     LiveData<List<CourseEntity>> getAllCourses();
 
-//    @Query("SELECT * FROM course_table WHERE termId = :termID")
-//    LiveData<List<CourseEntity>> getAllAssociatedCourses(int termID);
-
-//    @Query("SELECT * FROM part_table WHERE productID= :prodID ORDER BY partID ASC")
-//    LiveData<List<PartEntity>> getAllAssociatedParts(int prodID);
+    @Query("UPDATE course_table SET basicStatus = 2 WHERE courseID == :id")
+    void deleteById(int id);
 }

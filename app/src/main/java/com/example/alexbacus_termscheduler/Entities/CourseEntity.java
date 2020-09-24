@@ -15,8 +15,9 @@ public class CourseEntity {
     private String status;
     private String notes;
     private int termId;
+    private int basicStatus;
 
-    public CourseEntity(int courseID, String courseTitle, String startDate, String endDate, String status, String notes, int termId) {
+    public CourseEntity(int courseID, String courseTitle, String startDate, String endDate, String status, String notes, int termId, int basicStatus) {
         this.courseID = courseID;
         this.courseTitle = courseTitle;
         this.startDate = startDate;
@@ -24,6 +25,7 @@ public class CourseEntity {
         this.status = status;
         this.notes = notes;
         this.termId = termId;
+        this.basicStatus = basicStatus;
     }
 
     public int getCourseID() {
@@ -61,4 +63,6 @@ public class CourseEntity {
     public int getTermId() { return termId; }
 
     public void setTermId(int termId) { this.termId = termId; }
+
+    public int getBasicStatus() { return basicStatus; }
 }

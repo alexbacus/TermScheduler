@@ -4,18 +4,20 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import java.util.List;
 
+import com.example.alexbacus_termscheduler.DAO.AssessmentDAO;
 import com.example.alexbacus_termscheduler.DAO.CourseDAO;
 import com.example.alexbacus_termscheduler.DAO.TermDAO;
+import com.example.alexbacus_termscheduler.Entities.AssessmentEntity;
 import com.example.alexbacus_termscheduler.Entities.CourseEntity;
 import com.example.alexbacus_termscheduler.Entities.TermEntity;
 
 public class TermManagementRepository {
     private TermDAO mTermDao;
     private CourseDAO mCourseDao;
+    private AssessmentDAO mAssessmentDao;
     private LiveData<List<TermEntity>> mAllTerms;
     private LiveData<List<CourseEntity>> mAllCourses;
-    private LiveData<List<CourseEntity>> mAssociatedCourses;
-//    private int termId;
+    private LiveData<List<AssessmentEntity>> mAllAssessments;
 
     public TermManagementRepository(Application application) {
         TermManagementDatabase db = TermManagementDatabase.getDatabase(application);
@@ -23,7 +25,8 @@ public class TermManagementRepository {
         mAllTerms = mTermDao.getAllTerms();
         mCourseDao = db.courseDAO();
         mAllCourses = mCourseDao.getAllCourses();
-//        mAssociatedCourses = mCourseDao.getAllAssociatedCourses(termId);
+        mAssessmentDao = db.assessmentDAO();
+        mAllAssessments = mAssessmentDao.getAllAssessments();
     }
 
     public LiveData<List<TermEntity>> getAllTerms() {
@@ -32,7 +35,7 @@ public class TermManagementRepository {
 
     public LiveData<List<CourseEntity>> getAllCourses() { return mAllCourses; }
 
-//    public LiveData<List<CourseEntity>> getAllAssociatedCourses(int termId) { return mAssociatedCourses; }
+    public LiveData<List<AssessmentEntity>> getAllAssessments() { return mAllAssessments; }
 
     public void insert(TermEntity term) {
         TermManagementDatabase.databaseWriteExecutor.execute(() -> {
@@ -43,6 +46,30 @@ public class TermManagementRepository {
     public void insert(CourseEntity course) {
         TermManagementDatabase.databaseWriteExecutor.execute(() -> {
             mCourseDao.insert(course);
+        });
+    }
+
+    public void insert(AssessmentEntity assessment) {
+        TermManagementDatabase.databaseWriteExecutor.execute(() -> {
+            mAssessmentDao.insert(assessment);
+        });
+    }
+
+    public void deleteAssessment(int id) {
+        TermManagementDatabase.databaseWriteExecutor.execute(() -> {
+            mAssessmentDao.deleteById(id);
+        });
+    }
+
+    public void deleteCourse(int id) {
+        TermManagementDatabase.databaseWriteExecutor.execute(() -> {
+            mCourseDao.deleteById(id);
+        });
+    }
+
+    public void deleteTerm(int id) {
+        TermManagementDatabase.databaseWriteExecutor.execute(() -> {
+            mTermDao.deleteById(id);
         });
     }
 }

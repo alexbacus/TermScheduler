@@ -125,22 +125,48 @@
         app:layout_constraintStart_toStartOf="@+id/InputCourseTitle" />
 
     <TextView
-        android:id="@+id/TermLabel"
+        android:id="@+id/AssociatedAssessmentsLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
-        android:text="Term"
+        android:text="Assessments"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/InputNotes" />
 
-    <Spinner
-        android:id="@+id/TermSpinner"
-        android:layout_width="167dp"
-        android:layout_height="38dp"
-        tools:layout_editor_absoluteX="155dp"
-        tools:layout_editor_absoluteY="219dp"
-        app:layout_constraintBottom_toBottomOf="@+id/TermLabel"
-        app:layout_constraintStart_toStartOf="@+id/InputCourseTitle"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="@dimen/big_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AssociatedAssessmentsLabel"
+        app:layout_constraintVertical_bias="1.0"
+        tools:listitem="@layout/part_list_item" />
+
+    <Button
+        android:id="@+id/AddAssessmentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="114dp"
+        android:backgroundTint="#2196F3"
+        android:text="Add Assessment"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/recyclerview"
+        app:layout_constraintStart_toEndOf="@id/AssociatedAssessmentsLabel" />
+
+    <Button
+        android:id="@+id/DeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="180dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#D12014"
+        android:text="Delete Course"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerview"
+        app:layout_constraintStart_toStartOf="@id/StatusLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

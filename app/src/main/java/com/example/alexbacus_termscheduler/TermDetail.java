@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
     Button selectEndDateButton;
     private TextView editDate;
     private Button addCourseButton;
+    private FloatingActionButton deleteButton;
     private List<CourseEntity> associatedCourses = new ArrayList<CourseEntity>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,9 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
                 if (termID != -1) {
                     for(CourseEntity c: courses) {
                         if (c.getTermId() == termID && !(associatedCourses.contains(c))) {
-                            associatedCourses.add(c);
+                            if (c.getBasicStatus() != BasicStatus.TRASHED.getValue()){
+                                associatedCourses.add(c);
+                            }
                         }
                     }
                 }
@@ -80,6 +84,28 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
                 }
             }
         });
+
+        deleteButton = (FloatingActionButton) findViewById(R.id.DeleteButton);
+        if (getIntent().getIntExtra("termID", -1) == -1) {
+            deleteButton.setVisibility(View.INVISIBLE);
+        }
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!associatedCourses.isEmpty()) {
+                    Toast.makeText(
+                            getApplicationContext(),
+                            "Term could not be deleted because it has associated courses.",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                else {
+                    mTermViewModel.delete(getIntent().getIntExtra("termID", -1));
+                    finish();
+                }
+            }
+        });
+
         addCourseButton = (Button) findViewById(R.id.AddCourseButton);
         if (getIntent().getIntExtra("termID", -1) != -1) {
             addCourseButton.setVisibility(View.VISIBLE);
@@ -88,15 +114,15 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
             @Override
             public void onClick(View view) {
                 int courseId = mCourseViewModel.lastID() + 1;
-                Log.i("courseId", String.valueOf(courseId));
                 String courseTitle = "Course " + courseId;
                 String startDate = mEditStartDate.getText().toString();
                 String endDate = mEditEndDate.getText().toString();
                 String status = "In Progress";
                 String notes = "";
                 int termId = getIntent().getIntExtra("termID", -1);
+                int basicStatus = BasicStatus.ACTIVE.getValue();
 
-                CourseEntity course = new CourseEntity(courseId, courseTitle, startDate, endDate, status, notes, termId);
+                CourseEntity course = new CourseEntity(courseId, courseTitle, startDate, endDate, status, notes, termId, basicStatus);
                 mCourseViewModel.insert(course);
             }
         });
@@ -116,8 +142,6 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
             mEditEndDate.setText(getIntent().getStringExtra("endDate"));
         }
 
-
-
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,11 +154,12 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
                 replyIntent.putExtra("startDate", startDate);
                 replyIntent.putExtra("endDate", endDate);
                 int id=getIntent().getIntExtra("termID",-1);
+                int basicStatus = BasicStatus.ACTIVE.getValue();
                 if (id == -1) {
                     id = (mTermViewModel.lastID()) + 1;
                 }
                 replyIntent.putExtra("termID", id);
-                TermEntity term = new TermEntity(id, name, startDate, endDate);
+                TermEntity term = new TermEntity(id, name, startDate, endDate, basicStatus);
                 mTermViewModel.insert(term);
                 setResult(RESULT_OK, replyIntent);
                 finish();
@@ -181,5 +206,14 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 }

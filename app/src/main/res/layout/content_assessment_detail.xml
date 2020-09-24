@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <TextView
+        android:id="@+id/AssessmentTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="Assessment Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/InputAssessmentTitle" />
+
+    <EditText
+        android:id="@+id/InputAssessmentTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="108dp"
+        android:ems="10"
+        app:layout_constraintStart_toEndOf="@+id/AssessmentTitle"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <TextView
+        android:id="@+id/assessment_start_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="Start Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/InputAssessmentTitle" />
+
+    <EditText
+        android:id="@+id/start_date_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="@+id/assessment_start_date_label"
+        app:layout_constraintStart_toEndOf="@+id/AssessmentTitle"
+        tools:autofillHints="Start Date" />
+
+    <Button
+        android:id="@+id/select_start_date_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#2196F3"
+        android:text="Select"
+        app:layout_constraintBottom_toBottomOf="@id/start_date_edit_text"
+        app:layout_constraintStart_toEndOf="@id/start_date_edit_text" />
+
+    <TextView
+        android:id="@+id/assessment_end_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="End Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_date_edit_text" />
+
+    <EditText
+        android:id="@+id/end_date_edit_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="@+id/assessment_end_date_label"
+        app:layout_constraintStart_toEndOf="@+id/AssessmentTitle"
+        tools:autofillHints="End Date" />
+
+    <Button
+        android:id="@+id/select_end_date_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#2196F3"
+        android:text="Select"
+        app:layout_constraintBottom_toBottomOf="@id/end_date_edit_text"
+        app:layout_constraintStart_toEndOf="@id/end_date_edit_text" />
+
+    <TextView
+        android:id="@+id/TypeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="Assessment Type"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/end_date_edit_text" />
+
+    <Spinner
+        android:id="@+id/TypeSpinner"
+        android:layout_width="167dp"
+        android:layout_height="38dp"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="219dp"
+        app:layout_constraintBottom_toBottomOf="@+id/TypeLabel"
+        app:layout_constraintStart_toStartOf="@+id/InputAssessmentTitle"/>
+
+    <Button
+        android:id="@+id/DeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="164dp"
+        android:layout_marginTop="188dp"
+        android:backgroundTint="#D12014"
+        android:text="Delete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TypeSpinner" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package com.example.alexbacus_termscheduler;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.alexbacus_termscheduler.Entities.AssessmentEntity;
 import com.example.alexbacus_termscheduler.Entities.CourseEntity;
 import com.example.alexbacus_termscheduler.Entities.TermEntity;
 import com.example.alexbacus_termscheduler.ViewModel.CourseViewModel;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseActivity extends AppCompatActivity {
@@ -48,7 +50,13 @@ public class CourseActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final List<CourseEntity> courses) {
                 // Update the cached copy of the words in the adapter.
-                adapter.setCourses(courses);
+                List<CourseEntity> temp = new ArrayList<CourseEntity>();
+                for(CourseEntity c: courses) {
+                    if (c.getBasicStatus() != BasicStatus.TRASHED.getValue()) {
+                        temp.add(c);
+                    }
+                }
+                adapter.setCourses(temp);
             }
         });
         FloatingActionButton fab = findViewById(R.id.fab);

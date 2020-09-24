@@ -12,12 +12,14 @@ public class TermEntity {
         private String termName;
         private String startDate;
         private String endDate;
+        private int basicStatus;
 
-        public TermEntity(int termID, String termName, String startDate, String endDate) {
+        public TermEntity(int termID, String termName, String startDate, String endDate, int basicStatus) {
             this.termID = termID;
             this.termName = termName;
             this.startDate = startDate;
             this.endDate = endDate;
+            this.basicStatus = basicStatus;
         }
 
         public int getTermID() {
@@ -47,4 +49,6 @@ public class TermEntity {
         public String toString() {
             return termName;
         }
+
+        public int getBasicStatus() { return basicStatus; }
 }
