@@ -15,9 +15,15 @@ public class CourseEntity {
     private String status;
     private String notes;
     private int termId;
+    private String mentorName;
+    private String mentorEmail;
+    private String mentorPhone;
     private int basicStatus;
 
-    public CourseEntity(int courseID, String courseTitle, String startDate, String endDate, String status, String notes, int termId, int basicStatus) {
+    public CourseEntity(int courseID, String courseTitle, String startDate, String endDate,
+                        String status, String notes, int termId,
+                        String mentorName, String mentorEmail, String mentorPhone,
+                        int basicStatus) {
         this.courseID = courseID;
         this.courseTitle = courseTitle;
         this.startDate = startDate;
@@ -25,6 +31,9 @@ public class CourseEntity {
         this.status = status;
         this.notes = notes;
         this.termId = termId;
+        this.mentorName = mentorName;
+        this.mentorEmail = mentorEmail;
+        this.mentorPhone = mentorPhone;
         this.basicStatus = basicStatus;
     }
 
@@ -65,4 +74,16 @@ public class CourseEntity {
     public void setTermId(int termId) { this.termId = termId; }
 
     public int getBasicStatus() { return basicStatus; }
+
+    public String getMentorName() { return mentorName; }
+
+    public void setMentorName(String mentorName) { this.mentorName = mentorName; }
+
+    public String getMentorEmail() { return mentorEmail; }
+
+    public void setMentorEmail(String mentorEmail) { this.mentorEmail = mentorEmail; }
+
+    public String getMentorPhone() { return mentorPhone; }
+
+    public void setMentorPhone(String mentorPhone) { this.mentorPhone = mentorPhone; }
 }

@@ -3,6 +3,8 @@ package com.example.alexbacus_termscheduler;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,13 +20,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.alexbacus_termscheduler.Entities.AssessmentEntity;
-import com.example.alexbacus_termscheduler.Entities.CourseEntity;
 import com.example.alexbacus_termscheduler.ViewModel.AssessmentViewModel;
 import com.example.alexbacus_termscheduler.ViewModel.CourseViewModel;
-import com.example.alexbacus_termscheduler.ViewModel.TermViewModel;
 import com.example.alexbacus_termscheduler.ui.AssessmentAdapter;
 import com.example.alexbacus_termscheduler.ui.CourseAdapter;
-import com.example.alexbacus_termscheduler.ui.TermAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -174,6 +173,28 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         String currentDateString = year + "-" + month + "-" + dayOfMonth;
         editDate.setText(currentDateString);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.add_alert) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

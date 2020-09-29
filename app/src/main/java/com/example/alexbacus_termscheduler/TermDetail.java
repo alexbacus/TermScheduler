@@ -3,7 +3,8 @@ package com.example.alexbacus_termscheduler;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -15,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -119,10 +119,13 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
                 String endDate = mEditEndDate.getText().toString();
                 String status = "In Progress";
                 String notes = "";
+                String mentorName = "";
+                String mentorPhone = "";
+                String mentorEmail = "";
                 int termId = getIntent().getIntExtra("termID", -1);
                 int basicStatus = BasicStatus.ACTIVE.getValue();
 
-                CourseEntity course = new CourseEntity(courseId, courseTitle, startDate, endDate, status, notes, termId, basicStatus);
+                CourseEntity course = new CourseEntity(courseId, courseTitle, startDate, endDate, status, notes, termId, mentorName, mentorEmail, mentorPhone, basicStatus);
                 mCourseViewModel.insert(course);
             }
         });
@@ -201,6 +204,7 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
         String currentDateString = year + "-" + month + "-" + dayOfMonth;
         editDate.setText(currentDateString);
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {

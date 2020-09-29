@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:showIn="@layout/activity_course_detail"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
@@ -13,8 +14,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
         android:text="Course Title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/InputCourseTitle" />
+        app:layout_constraintBottom_toBottomOf="@+id/InputCourseTitle"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/InputCourseTitle"
@@ -28,7 +29,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <TextView
-        android:id="@+id/course_start_date_label"
+        android:id="@+id/StartDateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -38,52 +39,52 @@
         app:layout_constraintTop_toBottomOf="@+id/InputCourseTitle" />
 
     <EditText
-        android:id="@+id/start_date_edit_text"
+        android:id="@+id/InputStartDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="8"
         android:inputType="date"
-        app:layout_constraintBottom_toBottomOf="@+id/course_start_date_label"
+        app:layout_constraintBottom_toBottomOf="@+id/StartDateLabel"
         app:layout_constraintStart_toStartOf="@+id/InputCourseTitle"
         tools:autofillHints="Start Date" />
 
     <Button
-        android:id="@+id/select_start_date_button"
+        android:id="@+id/StartDateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2196F3"
         android:text="Select"
-        app:layout_constraintBottom_toBottomOf="@id/start_date_edit_text"
-        app:layout_constraintStart_toEndOf="@id/start_date_edit_text" />
+        app:layout_constraintBottom_toBottomOf="@id/InputStartDate"
+        app:layout_constraintStart_toEndOf="@id/InputStartDate" />
 
     <TextView
-        android:id="@+id/course_end_date_label"
+        android:id="@+id/EndDateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
         android:text="End Date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/start_date_edit_text" />
+        app:layout_constraintTop_toBottomOf="@+id/InputStartDate" />
 
     <EditText
-        android:id="@+id/end_date_edit_text"
+        android:id="@+id/InputEndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="8"
         android:inputType="date"
-        app:layout_constraintBottom_toBottomOf="@+id/course_end_date_label"
+        app:layout_constraintBottom_toBottomOf="@+id/EndDateLabel"
         app:layout_constraintStart_toStartOf="@+id/InputCourseTitle"
         tools:autofillHints="End Date" />
 
     <Button
-        android:id="@+id/select_end_date_button"
+        android:id="@+id/EndDateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#2196F3"
         android:text="Select"
-        app:layout_constraintBottom_toBottomOf="@id/end_date_edit_text"
-        app:layout_constraintStart_toEndOf="@id/end_date_edit_text" />
+        app:layout_constraintBottom_toBottomOf="@id/InputEndDate"
+        app:layout_constraintStart_toEndOf="@id/InputEndDate" />
 
     <TextView
         android:id="@+id/StatusLabel"
@@ -93,16 +94,16 @@
         android:layout_marginTop="50dp"
         android:text="Status"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/end_date_edit_text" />
+        app:layout_constraintTop_toBottomOf="@+id/InputEndDate" />
 
     <Spinner
         android:id="@+id/StatusSpinner"
         android:layout_width="167dp"
         android:layout_height="38dp"
-        tools:layout_editor_absoluteX="155dp"
-        tools:layout_editor_absoluteY="219dp"
         app:layout_constraintBottom_toBottomOf="@+id/StatusLabel"
-        app:layout_constraintStart_toStartOf="@+id/InputCourseTitle"/>
+        app:layout_constraintStart_toStartOf="@+id/InputCourseTitle"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="219dp" />
 
     <TextView
         android:id="@+id/NotesLabel"
@@ -129,20 +130,76 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="36dp"
         android:text="Assessments"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MentorEmailLabel" />
+
+    <TextView
+        android:id="@+id/MentorNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:text="Mentor Name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/InputNotes" />
 
+    <EditText
+        android:id="@+id/InputMentorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:ems="10"
+        app:layout_constraintBottom_toBottomOf="@+id/MentorNameLabel"
+        app:layout_constraintStart_toEndOf="@+id/MentorNameLabel" />
+
+    <TextView
+        android:id="@+id/MentorEmailLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="62dp"
+        android:layout_marginTop="20dp"
+        android:text="Email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MentorPhoneLabel" />
+
+    <EditText
+        android:id="@+id/InputMentorEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:ems="10"
+        app:layout_constraintBottom_toBottomOf="@+id/MentorEmailLabel"
+        app:layout_constraintStart_toEndOf="@+id/MentorEmailLabel" />
+
+    <TextView
+        android:id="@+id/MentorPhoneLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="62dp"
+        android:layout_marginTop="20dp"
+        android:text="Phone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/InputMentorName" />
+
+    <EditText
+        android:id="@+id/InputMentorPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:ems="10"
+        app:layout_constraintBottom_toBottomOf="@+id/MentorPhoneLabel"
+        app:layout_constraintStart_toEndOf="@+id/MentorPhoneLabel" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
         android:padding="@dimen/big_padding"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/AssociatedAssessmentsLabel"
         app:layout_constraintVertical_bias="1.0"
         tools:listitem="@layout/part_list_item" />
@@ -157,16 +214,5 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/recyclerview"
         app:layout_constraintStart_toEndOf="@id/AssociatedAssessmentsLabel" />
-
-    <Button
-        android:id="@+id/DeleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="180dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="#D12014"
-        android:text="Delete Course"
-        app:layout_constraintBottom_toBottomOf="@id/recyclerview"
-        app:layout_constraintStart_toStartOf="@id/StatusLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
