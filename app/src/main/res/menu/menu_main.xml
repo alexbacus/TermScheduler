@@ -5,7 +5,33 @@
     <item
         android:id="@+id/add_alert"
         android:icon="@drawable/ic_baseline_add_alert_24"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:title="@string/action_settings">
+        <menu>
+            <item
+            android:id="@+id/add_alarm_start"
+            android:title="Add Start Date Alarm"
+                />
+            <item
+                android:id="@+id/add_alarm_end"
+                android:title="Add End Date Alarm"
+                />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/share_notes_icon"
+        android:icon="@drawable/ic_baseline_share_24"
         android:orderInCategory="200"
         app:showAsAction="always"
-        android:title="TODO" />
+        android:title="@string/action_settings">
+        <menu>
+            <item
+                android:id="@+id/share_notes"
+                android:title="Share Notes"
+            />
+        </menu>
+    </item>
+
+
 </menu>

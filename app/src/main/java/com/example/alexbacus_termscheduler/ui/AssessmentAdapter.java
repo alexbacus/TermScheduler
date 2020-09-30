@@ -31,8 +31,7 @@ public class AssessmentAdapter extends RecyclerView.Adapter<AssessmentAdapter.As
                     Intent intent = new Intent(context, AssessmentDetail.class);
                     intent.putExtra("assessmentTitle", current.getAssessmentTitle());
                     intent.putExtra("type", current.getType());
-                    intent.putExtra("startDate", current.getStartDate());
-                    intent.putExtra("endDate", current.getEndDate());
+                    intent.putExtra("dueDate", current.getDueDate());
                     intent.putExtra("position",position);
                     intent.putExtra("courseId", current.getCourseId());
                     intent.putExtra("assessmentID",current.getAssessmentID());

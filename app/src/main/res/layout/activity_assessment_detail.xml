@@ -30,5 +30,14 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_baseline_save_24" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/DeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="@dimen/fab_margin"
+        android:backgroundTint="#D12014"
+        app:srcCompat="@drawable/ic_baseline_delete_24" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

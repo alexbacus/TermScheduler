@@ -19,7 +19,7 @@ import com.example.alexbacus_termscheduler.Entities.TermEntity;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {TermEntity.class, CourseEntity.class, AssessmentEntity.class}, version = 10, exportSchema = false)
+@Database(entities = {TermEntity.class, CourseEntity.class, AssessmentEntity.class}, version = 11, exportSchema = false)
 
 public abstract class TermManagementDatabase extends RoomDatabase {
     public abstract TermDAO termDAO();
@@ -75,9 +75,9 @@ public abstract class TermManagementDatabase extends RoomDatabase {
                 AssessmentDAO assessmentDao = INSTANCE.assessmentDAO();
                 assessmentDao.deleteAllAssessments();
 
-                AssessmentEntity assessment = new AssessmentEntity(1, "Assessment 1", "Objective", "2019-01-01", "2019-02-01", 1, 1);
+                AssessmentEntity assessment = new AssessmentEntity(1, "Assessment 1", "Objective", "2019-01-01",  1, 1);
                 assessmentDao.insert(assessment);
-                assessment = new AssessmentEntity(2, "Assessment 2", "Performance", "2019-02-01", "2019-03-01", 2, 1);
+                assessment = new AssessmentEntity(2, "Assessment 2", "Performance", "2019-02-01",  2, 1);
                 assessmentDao.insert(assessment);
             });
         }

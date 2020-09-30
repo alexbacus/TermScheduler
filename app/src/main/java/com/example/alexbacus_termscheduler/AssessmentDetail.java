@@ -1,6 +1,9 @@
 package com.example.alexbacus_termscheduler;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,6 +29,9 @@ import com.example.alexbacus_termscheduler.ui.AssessmentAdapter;
 import com.example.alexbacus_termscheduler.ui.CourseAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -34,14 +40,14 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
     private CourseViewModel mCourseViewModel;
     private AssessmentViewModel mAssessmentViewModel;
     private EditText mEditTitle;
-    private EditText mEditStartDate;
-    private EditText mEditEndDate;
+    private EditText mEditDueDate;
     private String type;
-    Button selectStartDateButton;
-    Button selectEndDateButton;
-    Button deleteButton;
+    Button selectDueDateButton;
+    FloatingActionButton deleteButton;
     private TextView editDate;
     private List<String> assessmentType = new ArrayList<>();
+    private String alertDueDate = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +60,7 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
         mCourseViewModel.getAllCourses().observe(this, adapter::setCourses);
         setContentView(R.layout.activity_assessment_detail);
         mEditTitle = findViewById(R.id.InputAssessmentTitle);
-        mEditStartDate = findViewById(R.id.start_date_edit_text);
-        mEditEndDate = findViewById(R.id.end_date_edit_text);
+        mEditDueDate = findViewById(R.id.due_date_edit_text);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
@@ -66,8 +71,7 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
         setUpStatusSpinner();
         if (getIntent().getStringExtra("assessmentTitle") != null) {
             mEditTitle.setText(getIntent().getStringExtra("assessmentTitle"));
-            mEditStartDate.setText(getIntent().getStringExtra("startDate"));
-            mEditEndDate.setText(getIntent().getStringExtra("endDate"));
+            mEditDueDate.setText(getIntent().getStringExtra("dueDate"));
             Spinner spinner = (Spinner) findViewById(R.id.TypeSpinner);
             spinner.setSelection(assessmentType.indexOf(getIntent().getStringExtra("type")));
         }
@@ -77,11 +81,9 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
             public void onClick(View view) {
                 Intent replyIntent = new Intent();
                 String title = mEditTitle.getText().toString();
-                String startDate = mEditStartDate.getText().toString();
-                String endDate = mEditEndDate.getText().toString();
+                String dueDate = mEditDueDate.getText().toString();
                 replyIntent.putExtra("assessmentTitle", title);
-                replyIntent.putExtra("startDate", startDate);
-                replyIntent.putExtra("endDate", endDate);
+                replyIntent.putExtra("dueDate", dueDate);
                 replyIntent.putExtra("type", type);
                 int id=getIntent().getIntExtra("assessmentID",-1);
                 int basicStatus = BasicStatus.ACTIVE.getValue();
@@ -92,13 +94,13 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
                 replyIntent.putExtra("basicStatus", basicStatus);
                 int courseId = getIntent().getIntExtra("courseId", 0);
                 replyIntent.putExtra("courseId", id);
-                AssessmentEntity assessment = new AssessmentEntity(id, title, type, startDate, endDate, courseId, basicStatus);
+                AssessmentEntity assessment = new AssessmentEntity(id, title, type, dueDate, courseId, basicStatus);
                 mAssessmentViewModel.insert(assessment);
                 setResult(RESULT_OK, replyIntent);
                 finish();
             }
         });
-        deleteButton = (Button)findViewById(R.id.DeleteButton);
+        deleteButton = (FloatingActionButton)findViewById(R.id.DeleteButton);
         if (getIntent().getIntExtra("assessmentID", -1) == -1) {
             deleteButton.setVisibility(View.INVISIBLE);
         }
@@ -141,22 +143,12 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
     }
 
     private void setUpDatePickers(){
-        selectStartDateButton = findViewById(R.id.select_start_date_button);
-        selectEndDateButton = findViewById(R.id.select_end_date_button);
+        selectDueDateButton = findViewById(R.id.select_due_date_button);
 
-        selectStartDateButton.setOnClickListener(new View.OnClickListener() {
+        selectDueDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editDate = findViewById(R.id.start_date_edit_text);
-                DialogFragment datePicker = new DatePickerFragment();
-                datePicker.show(getSupportFragmentManager(), "date picker");
-            }
-        });
-
-        selectEndDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editDate = findViewById(R.id.end_date_edit_text);
+                editDate = findViewById(R.id.due_date_edit_text);
                 DialogFragment datePicker = new DatePickerFragment();
                 datePicker.show(getSupportFragmentManager(), "date picker");
             }
@@ -166,19 +158,55 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month = month +1);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        String currentDateString = year + "-" + month + "-" + dayOfMonth;
+
+        String currentDateString;
+        String monthStr;
+        String dayStr;
+        if (month < 10) {
+            monthStr = "0" + month;
+        }
+        else {
+            monthStr = String.valueOf(month);
+        }
+
+        if (dayOfMonth < 10) {
+            dayStr = "0" + dayOfMonth;
+        }
+        else {
+            dayStr = String.valueOf(dayOfMonth);
+        }
+
+        currentDateString = year + "-" + monthStr + "-" + dayStr;
         editDate.setText(currentDateString);
+    }
+
+    private void scheduleNotification () {
+        Intent notificationIntent = new Intent( this, NotificationPublisher.class );
+
+        notificationIntent.putExtra("content", "Your assessment, " + getIntent().getStringExtra("assessmentTitle") + ", is due today!");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 3, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = LocalDateTime.parse(alertDueDate).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        assert alarmManager != null;
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.findItem(R.id.add_alarm_end).setVisible(false);
+        menu.findItem(R.id.share_notes_icon).setVisible(false);
+        menu.findItem(R.id.add_alarm_start).setTitle("Add Due Date Alarm");
+        if(getIntent().getIntExtra("assessmentID", -1) == -1) {
+            menu.findItem(R.id.add_alert).setVisible(false);
+        }
         return true;
     }
 
@@ -190,7 +218,9 @@ public class AssessmentDetail extends AppCompatActivity  implements DatePickerDi
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.add_alert) {
+        if (id == R.id.add_alarm_start) {
+            alertDueDate = mEditDueDate.getText().toString() + "T" + LocalTime.now().toString();
+            scheduleNotification() ;
             return true;
         }
 

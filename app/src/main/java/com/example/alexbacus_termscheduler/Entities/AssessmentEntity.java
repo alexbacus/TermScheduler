@@ -13,17 +13,15 @@ public class AssessmentEntity {
 
     private String assessmentTitle;
     private String type;
-    private String startDate;
-    private String endDate;
+    private String dueDate;
     private int courseId;
     private int basicStatus;
 
-    public AssessmentEntity(int assessmentID, String assessmentTitle, String type, String startDate, String endDate, int courseId, int basicStatus) {
+    public AssessmentEntity(int assessmentID, String assessmentTitle, String type, String dueDate, int courseId, int basicStatus) {
         this.assessmentID = assessmentID;
         this.assessmentTitle = assessmentTitle;
         this.type = type;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.dueDate = dueDate;
         this.courseId = courseId;
         this.basicStatus = basicStatus;
     }
@@ -40,13 +38,9 @@ public class AssessmentEntity {
 
     public void setType(String type) { this.type = type; }
 
-    public String getStartDate() { return startDate; }
+    public String getDueDate() { return dueDate; }
 
-    public void setStartDate(String startDate) { this.startDate = startDate; }
-
-    public String getEndDate() { return endDate; }
-
-    public void setEndDate(String endDate) { this.endDate = endDate; }
+    public void setDueDate(String startDate) { this.dueDate = startDate; }
 
     public int getCourseId() { return courseId; }
 

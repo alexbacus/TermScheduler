@@ -3,6 +3,7 @@ package com.example.alexbacus_termscheduler;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
     private Button addCourseButton;
     private FloatingActionButton deleteButton;
     private List<CourseEntity> associatedCourses = new ArrayList<CourseEntity>();
+    private boolean isValid = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,25 +151,43 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent replyIntent = new Intent();
-                String name = mEditName.getText().toString();
-                String startDate = mEditStartDate.getText().toString();
-                String endDate = mEditEndDate.getText().toString();
-                replyIntent.putExtra("termName", name);
-                replyIntent.putExtra("startDate", startDate);
-                replyIntent.putExtra("endDate", endDate);
-                int id=getIntent().getIntExtra("termID",-1);
-                int basicStatus = BasicStatus.ACTIVE.getValue();
-                if (id == -1) {
-                    id = (mTermViewModel.lastID()) + 1;
+                validate();
+                if (isValid) {
+                    Intent replyIntent = new Intent();
+                    String name = mEditName.getText().toString();
+                    String startDate = mEditStartDate.getText().toString();
+                    String endDate = mEditEndDate.getText().toString();
+                    replyIntent.putExtra("termName", name);
+                    replyIntent.putExtra("startDate", startDate);
+                    replyIntent.putExtra("endDate", endDate);
+                    int id=getIntent().getIntExtra("termID",-1);
+                    int basicStatus = BasicStatus.ACTIVE.getValue();
+                    if (id == -1) {
+                        id = (mTermViewModel.lastID()) + 1;
+                    }
+                    replyIntent.putExtra("termID", id);
+                    TermEntity term = new TermEntity(id, name, startDate, endDate, basicStatus);
+                    mTermViewModel.insert(term);
+                    setResult(RESULT_OK, replyIntent);
+                    finish();
                 }
-                replyIntent.putExtra("termID", id);
-                TermEntity term = new TermEntity(id, name, startDate, endDate, basicStatus);
-                mTermViewModel.insert(term);
-                setResult(RESULT_OK, replyIntent);
-                finish();
+                else {
+                    Toast.makeText(getApplicationContext(), "Name, Start Date, and End Date are required.", Toast.LENGTH_LONG).show();
+                }
             }
         });
+    }
+
+    private void validate() {
+        if (mEditName.getText().toString().isEmpty()) {
+            isValid = false;
+        }
+        if (mEditStartDate.getText().toString().isEmpty()) {
+            isValid = false;
+        }
+        if (mEditEndDate.getText().toString().isEmpty()) {
+            isValid = false;
+        }
     }
 
     private void setUpDatePickers(){

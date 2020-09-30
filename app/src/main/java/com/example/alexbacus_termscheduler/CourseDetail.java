@@ -44,9 +44,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -76,6 +78,7 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
     public static final String NOTIFICATION_CHANNEL_ID = "10001" ;
     private final static String default_notification_channel_id = "default" ;
     private String alertStartDate = "";
+    private boolean isValid = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,7 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
             // Update the cached copy of the words in the adapter.
             adapter.setCourses(courses);
         });
+
         mAssessmentViewModel.getAllAssessments().observe(this, new Observer<List<AssessmentEntity>>() {
             @Override
             public void onChanged(@Nullable final List<AssessmentEntity> assessments) {
@@ -128,12 +132,11 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
             public void onClick(View view) {
                 int assessmentId = mAssessmentViewModel.lastID() + 1;
                 String assessmentTitle = "Assessment " + assessmentId;
-                String startDate = mEditStartDate.getText().toString();
-                String endDate = mEditEndDate.getText().toString();
+                String dueDate = mEditEndDate.getText().toString();
                 String type = "Performance";
                 int courseId = getIntent().getIntExtra("courseID", -1);
 
-                AssessmentEntity assessment = new AssessmentEntity(assessmentId, assessmentTitle, type, startDate, endDate, courseId, BasicStatus.ACTIVE.getValue());
+                AssessmentEntity assessment = new AssessmentEntity(assessmentId, assessmentTitle, type, dueDate, courseId, BasicStatus.ACTIVE.getValue());
                 mAssessmentViewModel.insert(assessment);
                 if (associatedAssessments.size() == 4) {
                     addAssessmentButton.setVisibility(View.INVISIBLE);
@@ -163,7 +166,6 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
             Spinner spinner = (Spinner) findViewById(R.id.StatusSpinner);
             spinner.setSelection(courseStatus.indexOf(getIntent().getStringExtra("status")));
             mEditNotes.setText(getIntent().getStringExtra("notes"));
-            Log.i("mentorName", getIntent().getStringExtra("mentorName"));
             mEditMentorName.setText(getIntent().getStringExtra("mentorName"));
             mEditMentorEmail.setText(getIntent().getStringExtra("mentorEmail"));
             mEditMentorPhone.setText(getIntent().getStringExtra("mentorPhone"));
@@ -183,33 +185,39 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent replyIntent = new Intent();
-                String title = mEditTitle.getText().toString();
-                String startDate = mEditStartDate.getText().toString();
-                String endDate = mEditEndDate.getText().toString();
-                String notes = mEditNotes.getText().toString();
-                String mentorName = mEditMentorName.getText().toString();
-                String mentorEmail = mEditMentorEmail.getText().toString();
-                String mentorPhone = mEditMentorPhone.getText().toString();
-                replyIntent.putExtra("courseTitle", title);
-                replyIntent.putExtra("startDate", startDate);
-                replyIntent.putExtra("endDate", endDate);
-                replyIntent.putExtra("status", status);
-                replyIntent.putExtra("notes", notes);
-                replyIntent.putExtra("mentorName", mentorName);
-                replyIntent.putExtra("mentorEmail", mentorEmail);
-                replyIntent.putExtra("mentorPhone", mentorPhone);
-                int id=getIntent().getIntExtra("courseID",-1);
-                int basicStatus = getIntent().getIntExtra("basicStatus", 1);
-                if (id == -1) {
-                    id = (mCourseViewModel.lastID()) + 1;
+                validate();
+                if (isValid) {
+                    Intent replyIntent = new Intent();
+                    String title = mEditTitle.getText().toString();
+                    String startDate = mEditStartDate.getText().toString();
+                    String endDate = mEditEndDate.getText().toString();
+                    String notes = mEditNotes.getText().toString();
+                    String mentorName = mEditMentorName.getText().toString();
+                    String mentorEmail = mEditMentorEmail.getText().toString();
+                    String mentorPhone = mEditMentorPhone.getText().toString();
+                    replyIntent.putExtra("courseTitle", title);
+                    replyIntent.putExtra("startDate", startDate);
+                    replyIntent.putExtra("endDate", endDate);
+                    replyIntent.putExtra("status", status);
+                    replyIntent.putExtra("notes", notes);
+                    replyIntent.putExtra("mentorName", mentorName);
+                    replyIntent.putExtra("mentorEmail", mentorEmail);
+                    replyIntent.putExtra("mentorPhone", mentorPhone);
+                    int id=getIntent().getIntExtra("courseID",-1);
+                    int basicStatus = getIntent().getIntExtra("basicStatus", 1);
+                    if (id == -1) {
+                        id = (mCourseViewModel.lastID()) + 1;
+                    }
+                    int termId = getIntent().getIntExtra("termId", 0);
+                    replyIntent.putExtra("courseID", id);
+                    CourseEntity course = new CourseEntity(id, title, startDate, endDate, status, notes, termId, mentorName, mentorEmail, mentorPhone, basicStatus);
+                    mCourseViewModel.insert(course);
+                    setResult(RESULT_OK, replyIntent);
+                    finish();
                 }
-                int termId = getIntent().getIntExtra("termId", 0);
-                replyIntent.putExtra("courseID", id);
-                CourseEntity course = new CourseEntity(id, title, startDate, endDate, status, notes, termId, mentorName, mentorEmail, mentorPhone, basicStatus);
-                mCourseViewModel.insert(course);
-                setResult(RESULT_OK, replyIntent);
-                finish();
+                else {
+                    Toast.makeText(getApplicationContext(), "Title, Start Date, and End Date are required.", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -297,38 +305,55 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
         editDate.setText(currentDateString);
     }
 
-    private void scheduleNotification (Notification notification) {
+    private void validate() {
+        if (mEditTitle.getText().toString().isEmpty()) {
+            isValid = false;
+        }
+        if (mEditStartDate.getText().toString().isEmpty()) {
+            isValid = false;
+        }
+        if (mEditEndDate.getText().toString().isEmpty()) {
+            isValid = false;
+        }
+    }
+
+    private void scheduleNotification (Boolean isStart) {
         Intent notificationIntent = new Intent( this, NotificationPublisher.class );
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID , 1 );
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION , notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent;
+        if (isStart) {
+            notificationIntent.putExtra("content", "Your course, " + getIntent().getStringExtra("courseTitle") + ", is starting today!");
+            pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        else {
+            notificationIntent.putExtra("content", "Your course, " + getIntent().getStringExtra("courseTitle") + ", is ending today!");
+            pendingIntent = PendingIntent.getBroadcast(this, 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
 
         long futureInMillis = LocalDateTime.parse(alertStartDate).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        String nowStr = dtf.format(now).replace(" ", "T");
-        long currentInMillis = LocalDateTime.parse(nowStr).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long delay = SystemClock.elapsedRealtime() + (futureInMillis - currentInMillis);
-        Log.i("delay", String.valueOf(delay));
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, delay, pendingIntent);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, futureInMillis, pendingIntent);
     }
-    private Notification getNotification (String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder( this, default_notification_channel_id );
-        builder.setContentTitle("Scheduled Notification");
-        builder.setContentText(content);
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
-        builder.setAutoCancel(true);
-        builder.setChannelId(NOTIFICATION_CHANNEL_ID);
-        return builder.build();
+
+    private void shareNotes() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, mEditNotes.getText());
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(getIntent().getIntExtra("courseID", -1) == -1) {
+            menu.findItem(R.id.add_alert).setVisible(false);
+        }
         return true;
     }
 
@@ -340,9 +365,18 @@ public class CourseDetail extends AppCompatActivity implements DatePickerDialog.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.add_alert) {
-            alertStartDate = mEditStartDate.getText().toString() + "T12:19:00";
-            scheduleNotification(getNotification( "5 second delay" )) ;
+        if (id == R.id.add_alarm_start) {
+            alertStartDate = mEditStartDate.getText().toString() + "T" + LocalTime.now().toString();
+            scheduleNotification(true) ;
+            return true;
+        }
+        if (id == R.id.add_alarm_end) {
+            alertStartDate = mEditEndDate.getText().toString() + "T" + LocalTime.now().toString();
+            scheduleNotification(false) ;
+            return true;
+        }
+        if (id == R.id.share_notes) {
+            shareNotes();
             return true;
         }
 
