@@ -19,7 +19,7 @@ import com.example.alexbacus_termscheduler.Entities.TermEntity;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {TermEntity.class, CourseEntity.class, AssessmentEntity.class}, version = 11, exportSchema = false)
+@Database(entities = {TermEntity.class, CourseEntity.class, AssessmentEntity.class}, version = 13, exportSchema = false)
 
 public abstract class TermManagementDatabase extends RoomDatabase {
     public abstract TermDAO termDAO();
@@ -57,9 +57,9 @@ public abstract class TermManagementDatabase extends RoomDatabase {
                 TermDAO dao = INSTANCE.termDAO();
                 dao.deleteAllTerms();
 
-                TermEntity term = new TermEntity(1,"Hello", "2019-01-01", "2019-02-01", 1);
+                TermEntity term = new TermEntity(1,"Term 1", "2019-01-01", "2019-02-01", 1);
                 dao.insert(term);
-                term = new TermEntity(2, "World", "2020-01-01", "2020-02-01", 1);
+                term = new TermEntity(2, "Term 2", "2020-09-01", "2020-11-01", 1);
                 dao.insert(term);
 
                 CourseDAO courseDao = INSTANCE.courseDAO();
@@ -68,7 +68,7 @@ public abstract class TermManagementDatabase extends RoomDatabase {
                 CourseEntity course = new CourseEntity(1, "Course 1", "2019-01-01", "2019-02-01", "In Progress", "Here are some notes", 1,
                         "John Smith", "johnsmith@wgu.edu", "1234567890", 1);
                 courseDao.insert(course);
-                course = new CourseEntity(2, "Course 2", "2020-01-01", "2020-02-01", "Completed", "Here are some notes", 2,
+                course = new CourseEntity(2, "Course 2", "2020-09-01", "2020-10-01", "Completed", "Here are some notes", 2,
                         "Alex Jones", "alexjones@wgu.edu", "1234567890",1);
                 courseDao.insert(course);
 
@@ -77,7 +77,7 @@ public abstract class TermManagementDatabase extends RoomDatabase {
 
                 AssessmentEntity assessment = new AssessmentEntity(1, "Assessment 1", "Objective", "2019-01-01",  1, 1);
                 assessmentDao.insert(assessment);
-                assessment = new AssessmentEntity(2, "Assessment 2", "Performance", "2019-02-01",  2, 1);
+                assessment = new AssessmentEntity(2, "Assessment 2", "Performance", "2020-10-01",  2, 1);
                 assessmentDao.insert(assessment);
             });
         }

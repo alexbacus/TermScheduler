@@ -51,4 +51,6 @@ public class TermEntity {
         }
 
         public int getBasicStatus() { return basicStatus; }
+
+        public void setBasicStatus(int basicStatus) { this.basicStatus = basicStatus; }
 }
