@@ -49,37 +49,6 @@ public abstract class TermManagementDatabase extends RoomDatabase {
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
-
-            // If you want to keep data through app restarts,
-            // comment out the following code block
-
-            databaseWriteExecutor.execute(() -> {
-                TermDAO dao = INSTANCE.termDAO();
-                dao.deleteAllTerms();
-
-                TermEntity term = new TermEntity(1,"Term 1", "2019-01-01", "2019-02-01", 1);
-                dao.insert(term);
-                term = new TermEntity(2, "Term 2", "2020-09-01", "2020-11-01", 1);
-                dao.insert(term);
-
-                CourseDAO courseDao = INSTANCE.courseDAO();
-                courseDao.deleteAllCourses();
-
-                CourseEntity course = new CourseEntity(1, "Course 1", "2019-01-01", "2019-02-01", "In Progress", "Here are some notes", 1,
-                        "John Smith", "johnsmith@wgu.edu", "1234567890", 1);
-                courseDao.insert(course);
-                course = new CourseEntity(2, "Course 2", "2020-09-01", "2020-10-01", "Completed", "Here are some notes", 2,
-                        "Alex Jones", "alexjones@wgu.edu", "1234567890",1);
-                courseDao.insert(course);
-
-                AssessmentDAO assessmentDao = INSTANCE.assessmentDAO();
-                assessmentDao.deleteAllAssessments();
-
-                AssessmentEntity assessment = new AssessmentEntity(1, "Assessment 1", "Objective", "2019-01-01",  1, 1);
-                assessmentDao.insert(assessment);
-                assessment = new AssessmentEntity(2, "Assessment 2", "Performance", "2020-10-01",  2, 1);
-                assessmentDao.insert(assessment);
-            });
         }
     };
 
