@@ -221,7 +221,25 @@ public class TermDetail extends AppCompatActivity implements DatePickerDialog.On
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month = month +1);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        String currentDateString = year + "-" + month + "-" + dayOfMonth;
+
+        String currentDateString;
+        String monthStr;
+        String dayStr;
+        if (month < 10) {
+            monthStr = "0" + month;
+        }
+        else {
+            monthStr = String.valueOf(month);
+        }
+
+        if (dayOfMonth < 10) {
+            dayStr = "0" + dayOfMonth;
+        }
+        else {
+            dayStr = String.valueOf(dayOfMonth);
+        }
+
+        currentDateString = year + "-" + monthStr + "-" + dayStr;
         editDate.setText(currentDateString);
     }
 

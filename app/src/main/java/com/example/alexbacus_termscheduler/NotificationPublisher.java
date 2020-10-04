@@ -18,7 +18,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         createNotificationChannel(context,channel_id);
         Notification n= new NotificationCompat.Builder(context, channel_id)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setChannelId(String.valueOf(10001))
+                .setChannelId(channel_id)
                 .setContentTitle(intent.getStringExtra("content")).build();
 
         NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -32,7 +32,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "name";
             String description = "description";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
